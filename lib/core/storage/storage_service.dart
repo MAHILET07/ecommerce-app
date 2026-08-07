@@ -1,64 +1,106 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class StorageService {
 
-
   static const String tokenKey = "auth_token";
+  static const String usernameKey = "username";
+  static const String passwordKey = "password";
 
 
-
+  // Save login token
   Future<void> saveToken(String token) async {
+
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    await prefs.setString(
+      tokenKey,
+      token,
+    );
+  }
+
+
+  // Get token
+  Future<String?> getToken() async {
+
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    return prefs.getString(
+      tokenKey,
+    );
+  }
+
+
+  // Save registered user
+  Future<void> saveUser(
+      String username,
+      String password,
+  ) async {
 
     final prefs =
         await SharedPreferences.getInstance();
 
 
     await prefs.setString(
-      tokenKey,
-      token,
+      usernameKey,
+      username,
     );
 
+
+    await prefs.setString(
+      passwordKey,
+      password,
+    );
   }
 
 
 
-  Future<String?> getToken() async {
+  // Get saved username
+  Future<String?> getUsername() async {
 
     final prefs =
         await SharedPreferences.getInstance();
-
 
     return prefs.getString(
-      tokenKey,
+      usernameKey,
     );
-
   }
 
 
 
-  Future<void> clearToken() async {
+  // Get saved password
+  Future<String?> getPassword() async {
 
     final prefs =
         await SharedPreferences.getInstance();
 
-
-    await prefs.remove(
-      tokenKey,
+    return prefs.getString(
+      passwordKey,
     );
-
   }
 
 
 
+  // Check login status
   Future<bool> isLoggedIn() async {
 
     final token =
         await getToken();
 
-
     return token != null;
-
   }
 
+
+
+  // Logout
+  Future<void> clearToken() async {
+
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    await prefs.remove(
+      tokenKey,
+    );
+  }
 }

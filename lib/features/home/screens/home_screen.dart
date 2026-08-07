@@ -5,6 +5,7 @@ import '../../product/providers/product_provider.dart';
 import '../../product/screens/product_details_screen.dart';
 import '../../../core/widgets/product_card.dart';
 
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -13,11 +14,15 @@ class HomeScreen extends ConsumerStatefulWidget {
       _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final TextEditingController searchController =
+
+class _HomeScreenState
+    extends ConsumerState<HomeScreen> {
+
+  final searchController =
       TextEditingController();
 
-  String searchQuery = '';
+  String searchText = "";
+
 
   @override
   void dispose() {
@@ -25,188 +30,296 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    final products = ref.watch(productsProvider);
+
+
+    final products =
+        ref.watch(productsProvider);
+
+
 
     return Scaffold(
+
       appBar: AppBar(
+
         title: const Text(
-          'ZembilGo',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          "ZembilGo",
         ),
+
         actions: [
+
           IconButton(
+
             icon: const Icon(
               Icons.shopping_cart_outlined,
             ),
+
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
+
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+
                 const SnackBar(
                   content: Text(
-                    'Cart coming soon 🛒',
+                    "Cart coming soon 🛒",
                   ),
                 ),
+
               );
+
             },
+
           ),
+
         ],
+
       ),
 
+
+
       body: Padding(
-        padding: const EdgeInsets.all(16),
+
+        padding:
+            const EdgeInsets.all(16),
+
         child: Column(
+
           crossAxisAlignment:
               CrossAxisAlignment.start,
+
           children: [
+
+
             Text(
-              'Hello 👋',
+
+              "Hello 👋",
+
               style: Theme.of(context)
                   .textTheme
                   .headlineMedium
                   ?.copyWith(
-                    fontWeight: FontWeight.bold,
+
+                    fontWeight:
+                        FontWeight.bold,
+
                   ),
+
             ),
+
+
 
             const SizedBox(height: 8),
 
+
+
             const Text(
-              'What are you looking for today?',
+
+              "What are you looking for today?",
+
             ),
+
+
 
             const SizedBox(height: 20),
 
-            // SEARCH
-            TextField(
-              controller: searchController,
-              onChanged: (value) {
-                setState(() {
-                  searchQuery =
-                      value.toLowerCase().trim();
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Search products...',
-                prefixIcon:
-                    const Icon(Icons.search),
-                suffixIcon: searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(
-                          Icons.clear,
-                        ),
-                        onPressed: () {
-                          searchController.clear();
 
-                          setState(() {
-                            searchQuery = '';
-                          });
-                        },
-                      )
+
+            // SEARCH BAR
+
+            TextField(
+
+              controller:
+                  searchController,
+
+
+              onChanged: (value){
+
+                setState(() {
+
+                  searchText =
+                      value.toLowerCase();
+
+                });
+
+              },
+
+
+              decoration:
+                  InputDecoration(
+
+                hintText:
+                    "Search products...",
+
+
+                prefixIcon:
+                    const Icon(
+                      Icons.search,
+                    ),
+
+
+
+                suffixIcon:
+                    searchText.isNotEmpty
+
+                    ?
+
+                    IconButton(
+
+                      icon:
+                          const Icon(
+                            Icons.clear,
+                          ),
+
+
+                      onPressed: (){
+
+                        searchController.clear();
+
+                        setState(() {
+
+                          searchText =
+                              "";
+
+                        });
+
+                      },
+
+                    )
+
                     : null,
-                border: OutlineInputBorder(
+
+
+
+                border:
+                    OutlineInputBorder(
+
                   borderRadius:
                       BorderRadius.circular(15),
+
                 ),
+
               ),
+
             ),
+
+
 
             const SizedBox(height: 25),
 
+
+
             Text(
-              'Products',
+
+              "Products",
+
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
                   ?.copyWith(
-                    fontWeight: FontWeight.bold,
+
+                    fontWeight:
+                        FontWeight.bold,
+
                   ),
+
             ),
+
+
 
             const SizedBox(height: 15),
 
+
+
+
             Expanded(
+
               child: products.when(
-                loading: () {
-                  return const Center(
-                    child:
-                        CircularProgressIndicator(),
-                  );
-                },
 
-                error: (error, stack) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 50,
-                        ),
 
-                        const SizedBox(height: 12),
+                loading: () =>
 
-                        const Text(
-                          'Failed to load products',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
-                        ),
+                    const Center(
 
-                        const SizedBox(height: 20),
+                      child:
+                          CircularProgressIndicator(),
 
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            ref.invalidate(
-                              productsProvider,
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.refresh,
-                          ),
-                          label: const Text(
-                            'Try Again',
-                          ),
-                        ),
-                      ],
                     ),
-                  );
-                },
 
-                data: (items) {
+
+
+
+                error: (error, stack) =>
+
+                    Center(
+
+                      child: Text(
+
+                        "Error: $error",
+
+                      ),
+
+                    ),
+
+
+
+
+                data: (items){
+
+
+
                   final filteredProducts =
-                      items.where((product) {
+                      items.where((product){
+
+
                     return product.title
                             .toLowerCase()
-                            .contains(searchQuery) ||
+                            .contains(searchText)
+
+                        ||
+
                         product.category
                             .toLowerCase()
-                            .contains(searchQuery) ||
+                            .contains(searchText)
+
+                        ||
+
                         product.description
                             .toLowerCase()
-                            .contains(searchQuery);
+                            .contains(searchText);
+
+
+
                   }).toList();
 
-                  if (filteredProducts.isEmpty) {
-                    return Center(
+
+
+
+
+                  if(filteredProducts.isEmpty){
+
+                    return const Center(
+
                       child: Column(
+
                         mainAxisAlignment:
                             MainAxisAlignment.center,
+
                         children: [
-                          const Icon(
+
+                          Icon(
                             Icons.search_off,
                             size: 60,
                           ),
 
-                          const SizedBox(height: 15),
 
-                          const Text(
-                            'No products found',
+                          SizedBox(height: 15),
+
+
+                          Text(
+                            "No products found",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight:
@@ -214,77 +327,140 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 8),
-
-                          Text(
-                            'Try searching for something else.',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium,
-                          ),
                         ],
+
                       ),
+
                     );
+
                   }
 
+
+
+
+
                   return GridView.builder(
+
+
                     itemCount:
                         filteredProducts.length,
 
+
+
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: 0.62,
+
+                      crossAxisCount:
+                          2,
+
+                      childAspectRatio:
+                          0.62,
+
+                      crossAxisSpacing:
+                          10,
+
+                      mainAxisSpacing:
+                          10,
+
                     ),
 
+
+
+
                     itemBuilder:
-                        (context, index) {
+                        (context,index){
+
+
                       final product =
                           filteredProducts[index];
 
+
+
                       return GestureDetector(
-                        onTap: () {
+
+                        onTap: (){
+
+
                           Navigator.push(
+
                             context,
+
                             MaterialPageRoute(
+
                               builder: (_) =>
+
                                   ProductDetailsScreen(
-                                product: product,
-                              ),
+
+                                    product:
+                                        product,
+
+                                  ),
+
                             ),
+
                           );
+
+
                         },
 
+
+
                         child: ProductCard(
-                          product: product,
 
-                          onFavorite: () {
-                            // Favorites will be implemented later.
-                          },
+                          product:
+                              product,
 
-                          onAddToCart: () {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(
+
+                          onFavorite: (){},
+
+
+                          onAddToCart: (){
+
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(
+
                               SnackBar(
+
                                 content: Text(
-                                  '${product.title} added to cart 🛒',
+
+                                  "${product.title} added to cart 🛒",
+
                                 ),
+
                               ),
+
                             );
+
+
                           },
+
                         ),
+
                       );
+
+
                     },
+
+
                   );
+
+
                 },
+
+
               ),
+
             ),
+
           ],
+
         ),
+
       ),
+
     );
+
   }
+
 }
