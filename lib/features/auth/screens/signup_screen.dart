@@ -1,118 +1,107 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../providers/auth_provider.dart';
-import '../../../providers/storage_provider.dart';
-import '../../home/screens/home_screen.dart';
-import 'signup_screen.dart';
-
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() =>
-      _LoginScreenState();
+  State<SignupScreen> createState() =>
+      _SignupScreenState();
 }
 
-class _LoginScreenState
-    extends ConsumerState<LoginScreen> {
+class _SignupScreenState
+    extends State<SignupScreen> {
   final usernameController =
       TextEditingController();
 
   final passwordController =
       TextEditingController();
 
-  bool obscurePassword = true;
-  bool isLoading = false;
+  final confirmPasswordController =
+      TextEditingController();
 
-  Future<void> login() async {
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void signup() {
     final username =
         usernameController.text.trim();
 
     final password =
-        passwordController.text.trim();
+        passwordController.text;
 
-    // Validate fields
-    if (username.isEmpty || password.isEmpty) {
+    final confirmPassword =
+        confirmPasswordController.text;
+
+    if (username.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Please enter your username and password.',
+            'Please fill in all fields.',
           ),
         ),
       );
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      final result = await ref
-          .read(authRepositoryProvider)
-          .login(
-            username,
-            password,
-          );
-
-      // Save token locally
-      await ref
-          .read(storageProvider)
-          .saveToken(result.token);
-
-      if (!mounted) return;
-
-      // Go to Home
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const HomeScreen(),
-        ),
-      );
-
-      // Show success message
+    if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Login successful 🎉',
+            'Passwords do not match.',
           ),
         ),
       );
-    } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Login failed: $e',
-          ),
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      return;
     }
+
+    if (password.length < 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Password must be at least 4 characters.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Account created successfully! 🎉',
+        ),
+      ),
+    );
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Create Account'),
+      ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center,
             crossAxisAlignment:
                 CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 50),
+              const SizedBox(height: 20),
 
-              // Logo
               Center(
                 child: Container(
                   height: 90,
@@ -124,44 +113,44 @@ class _LoginScreenState
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.shopping_bag,
+                    Icons.person_add,
                     color: Colors.white,
-                    size: 50,
+                    size: 45,
                   ),
                 ),
               ),
 
               const SizedBox(height: 30),
 
-              // Welcome
               Text(
-                'Welcome Back 👋',
+                'Create your account',
                 style: Theme.of(context)
                     .textTheme
                     .headlineMedium
                     ?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight:
+                          FontWeight.bold,
                     ),
               ),
 
               const SizedBox(height: 8),
 
               Text(
-                'Login to continue shopping with ZembilGo',
+                'Join ZembilGo and start shopping.',
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge,
               ),
 
-              const SizedBox(height: 35),
+              const SizedBox(height: 30),
 
-              // Username
               TextField(
-                controller: usernameController,
+                controller:
+                    usernameController,
                 decoration: InputDecoration(
                   labelText: 'Username',
                   prefixIcon: const Icon(
-                    Icons.person,
+                    Icons.person_outline,
                   ),
                   border: OutlineInputBorder(
                     borderRadius:
@@ -172,14 +161,14 @@ class _LoginScreenState
 
               const SizedBox(height: 20),
 
-              // Password
               TextField(
-                controller: passwordController,
+                controller:
+                    passwordController,
                 obscureText: obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: const Icon(
-                    Icons.lock,
+                    Icons.lock_outline,
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -201,60 +190,66 @@ class _LoginScreenState
                 ),
               ),
 
+              const SizedBox(height: 20),
+
+              TextField(
+                controller:
+                    confirmPasswordController,
+                obscureText:
+                    obscureConfirmPassword,
+                decoration: InputDecoration(
+                  labelText:
+                      'Confirm Password',
+                  prefixIcon: const Icon(
+                    Icons.lock_outline,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscureConfirmPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        obscureConfirmPassword =
+                            !obscureConfirmPassword;
+                      });
+                    },
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 30),
 
-              // Login button
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed:
-                      isLoading ? null : login,
-                  style:
-                      ElevatedButton.styleFrom(
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(15),
+                  onPressed: signup,
+                  child: const Text(
+                    'CREATE ACCOUNT',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight:
+                          FontWeight.bold,
                     ),
                   ),
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child:
-                              CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text(
-                          'LOGIN',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
-                        ),
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // Sign Up
               Center(
                 child: TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const SignupScreen(),
-                      ),
-                    );
+                    Navigator.pop(context);
                   },
                   child: const Text(
-                    "Don't have an account? Sign Up",
+                    'Already have an account? Login',
                   ),
                 ),
               ),
@@ -263,12 +258,5 @@ class _LoginScreenState
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 }
