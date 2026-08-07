@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../auth/screens/login_screen.dart';
+
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
 
   @override
   State<SplashScreen> createState() =>
@@ -27,18 +31,14 @@ class _SplashScreenState extends State<SplashScreen>
 
 
     _controller = AnimationController(
-
       duration: const Duration(seconds: 2),
-
       vsync: this,
-
     );
 
 
     _scaleAnimation = Tween<double>(
       begin: 0.7,
       end: 1.0,
-
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -50,7 +50,6 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -62,6 +61,22 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
 
+    Future.delayed(
+      const Duration(seconds: 3),
+      () {
+
+        if (!mounted) return;
+
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const LoginScreen(),
+          ),
+        );
+
+      },
+    );
   }
 
 
@@ -84,117 +99,86 @@ class _SplashScreenState extends State<SplashScreen>
 
       body: Center(
 
-        child: AnimatedBuilder(
+        child: FadeTransition(
 
-          animation: _controller,
+          opacity: _fadeAnimation,
 
-          builder: (context, child) {
+          child: ScaleTransition(
 
-            return FadeTransition(
+            scale: _scaleAnimation,
 
-              opacity: _fadeAnimation,
+            child: Column(
 
-              child: ScaleTransition(
+              mainAxisAlignment:
+                  MainAxisAlignment.center,
 
-                scale: _scaleAnimation,
-
-                child: child,
-
-              ),
-
-            );
-
-          },
+              children: [
 
 
-          child: Column(
+                Container(
 
-            mainAxisAlignment:
-                MainAxisAlignment.center,
+                  height: 100,
 
+                  width: 100,
 
-            children: [
+                  decoration: BoxDecoration(
 
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary,
 
-              // App Icon
+                    shape: BoxShape.circle,
 
-              Container(
+                  ),
 
-                height: 100,
+                  child: const Icon(
 
-                width: 100,
+                    Icons.shopping_bag,
 
-                decoration: BoxDecoration(
+                    size: 55,
 
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary,
+                    color: Colors.white,
 
-                  shape: BoxShape.circle,
+                  ),
 
                 ),
 
 
-                child: const Icon(
+                const SizedBox(height: 25),
 
-                  Icons.shopping_bag,
 
-                  size: 55,
+                Text(
 
-                  color: Colors.white,
+                  'ZembilGo',
+
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineLarge
+                      ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
 
                 ),
 
-              ),
+
+                const SizedBox(height: 10),
 
 
+                const Text(
 
-              const SizedBox(height: 25),
+                  'Your smart shopping companion',
 
-
-
-              Text(
-
-                "ZembilGo",
-
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineLarge
-                    ?.copyWith(
-
-                      fontWeight:
-                          FontWeight.bold,
-
-                    ),
-
-              ),
+                ),
 
 
-
-              const SizedBox(height: 10),
-
+                const SizedBox(height: 40),
 
 
-              Text(
+                const CircularProgressIndicator(),
 
-                "Your smart shopping companion",
+              ],
 
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge,
-
-              ),
-
-
-
-              const SizedBox(height: 40),
-
-
-
-              const CircularProgressIndicator(),
-
-
-            ],
+            ),
 
           ),
 
