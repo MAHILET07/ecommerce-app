@@ -1,16 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/cart_item.dart';
-
 import '../../../data/models/product_model.dart';
 
 
 
-class CartNotifier extends StateNotifier<List<CartItem>> {
+class CartNotifier extends Notifier<List<CartItem>> {
 
 
-  CartNotifier()
-      : super([]);
+  @override
+  List<CartItem> build() {
+
+    return [];
+
+  }
 
 
 
@@ -18,7 +21,7 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
   void addToCart(ProductModel product) {
 
 
-    final existingIndex = state.indexWhere(
+    final index = state.indexWhere(
 
       (item) => item.product.id == product.id,
 
@@ -26,30 +29,24 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
 
 
 
-    if(existingIndex >= 0){
+    if(index != -1) {
 
 
-      state = [
+      final updatedCart =
+          [...state];
 
-        for(int i = 0; i < state.length; i++)
 
-          if(i == existingIndex)
+      updatedCart[index] = CartItem(
 
-            CartItem(
+        product: product,
 
-              product: state[i].product,
+        quantity:
+            updatedCart[index].quantity + 1,
 
-              quantity:
-                  state[i].quantity + 1,
+      );
 
-            )
 
-          else
-
-            state[i],
-
-      ];
-
+      state = updatedCart;
 
 
     } else {
@@ -77,13 +74,13 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
 
 
 
-  void removeFromCart(int productId){
+
+  void removeFromCart(int productId) {
 
 
     state = state.where(
 
-      (item) =>
-          item.product.id != productId,
+      (item) => item.product.id != productId,
 
     ).toList();
 
@@ -94,62 +91,100 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
 
 
 
-  void increaseQuantity(int productId){
+
+  void increaseQuantity(int productId) {
 
 
-    state = [
+    final updatedCart =
+        [...state];
 
-      for(final item in state)
 
-        if(item.product.id == productId)
 
-          CartItem(
+    final index = updatedCart.indexWhere(
 
-            product: item.product,
+      (item) => item.product.id == productId,
 
-            quantity: item.quantity + 1,
+    );
 
-          )
 
-        else
 
-          item
+    if(index != -1) {
 
-    ];
+
+      updatedCart[index] = CartItem(
+
+        product: updatedCart[index].product,
+
+        quantity:
+            updatedCart[index].quantity + 1,
+
+      );
+
+
+      state = updatedCart;
+
+
+    }
+
+
+  }
+
+
+
+
+
+
+
+  void decreaseQuantity(int productId) {
+
+
+    final updatedCart =
+        [...state];
+
+
+
+    final index = updatedCart.indexWhere(
+
+      (item) => item.product.id == productId,
+
+    );
+
+
+
+    if(index != -1) {
+
+
+      if(updatedCart[index].quantity > 1) {
+
+
+        updatedCart[index] = CartItem(
+
+          product:
+              updatedCart[index].product,
+
+          quantity:
+              updatedCart[index].quantity - 1,
+
+        );
+
+
+      } else {
+
+
+        updatedCart.removeAt(index);
+
+
+      }
+
+
+      state = updatedCart;
+
+
+    }
 
 
   }
 
-
-
-
-
-  void decreaseQuantity(int productId){
-
-
-    state = [
-
-      for(final item in state)
-
-        if(item.product.id == productId &&
-            item.quantity > 1)
-
-          CartItem(
-
-            product: item.product,
-
-            quantity: item.quantity - 1,
-
-          )
-
-        else
-
-          item
-
-    ];
-
-
-  }
 
 
 
@@ -161,14 +196,14 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
 
       0,
 
-      (sum,item)=>
-
+      (sum,item) =>
           sum + item.totalPrice,
 
     );
 
 
   }
+
 
 
 }
@@ -178,12 +213,8 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
 
 final cartProvider =
 
-    StateNotifierProvider<CartNotifier,List<CartItem>>(
+    NotifierProvider<CartNotifier,List<CartItem>>(
 
-      (ref){
-
-        return CartNotifier();
-
-      },
+      CartNotifier.new,
 
     );

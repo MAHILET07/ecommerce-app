@@ -2,33 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../product/providers/product_provider.dart';
-import '../../product/screens/product_details_screen.dart';
 import '../../../core/widgets/product_card.dart';
+
+import '../../cart/providers/cart_provider.dart';
+import '../../cart/screens/cart_screen.dart';
 
 
 class HomeScreen extends ConsumerStatefulWidget {
+
   const HomeScreen({super.key});
+
 
   @override
   ConsumerState<HomeScreen> createState() =>
       _HomeScreenState();
+
 }
 
 
-class _HomeScreenState
-    extends ConsumerState<HomeScreen> {
 
-  final searchController =
-      TextEditingController();
-
-  String searchText = "";
+class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
-  }
+  String searchQuery = "";
 
 
 
@@ -43,13 +39,16 @@ class _HomeScreenState
 
     return Scaffold(
 
+
       appBar: AppBar(
 
         title: const Text(
           "ZembilGo",
         ),
 
+
         actions: [
+
 
           IconButton(
 
@@ -57,26 +56,34 @@ class _HomeScreenState
               Icons.shopping_cart_outlined,
             ),
 
+
             onPressed: () {
 
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
 
-                const SnackBar(
-                  content: Text(
-                    "Cart coming soon 🛒",
-                  ),
+              Navigator.push(
+
+                context,
+
+                MaterialPageRoute(
+
+                  builder: (_) =>
+                      const CartScreen(),
+
                 ),
 
               );
+
 
             },
 
           ),
 
+
         ],
 
+
       ),
+
 
 
 
@@ -85,10 +92,15 @@ class _HomeScreenState
         padding:
             const EdgeInsets.all(16),
 
+
+
         child: Column(
+
 
           crossAxisAlignment:
               CrossAxisAlignment.start,
+
+
 
           children: [
 
@@ -123,35 +135,36 @@ class _HomeScreenState
 
 
 
+
             const SizedBox(height: 20),
 
 
 
-            // SEARCH BAR
 
             TextField(
 
-              controller:
-                  searchController,
 
+              onChanged: (value) {
 
-              onChanged: (value){
 
                 setState(() {
 
-                  searchText =
+                  searchQuery =
                       value.toLowerCase();
 
                 });
 
+
               },
 
 
-              decoration:
-                  InputDecoration(
+
+              decoration: InputDecoration(
+
 
                 hintText:
-                    "Search products...",
+                    "Search products",
+
 
 
                 prefixIcon:
@@ -161,53 +174,29 @@ class _HomeScreenState
 
 
 
-                suffixIcon:
-                    searchText.isNotEmpty
-
-                    ?
-
-                    IconButton(
-
-                      icon:
-                          const Icon(
-                            Icons.clear,
-                          ),
-
-
-                      onPressed: (){
-
-                        searchController.clear();
-
-                        setState(() {
-
-                          searchText =
-                              "";
-
-                        });
-
-                      },
-
-                    )
-
-                    : null,
-
-
-
                 border:
                     OutlineInputBorder(
+
 
                   borderRadius:
                       BorderRadius.circular(15),
 
+
                 ),
 
+
               ),
+
+
 
             ),
 
 
 
+
             const SizedBox(height: 25),
+
+
 
 
 
@@ -229,14 +218,18 @@ class _HomeScreenState
 
 
 
+
             const SizedBox(height: 15),
+
 
 
 
 
             Expanded(
 
+
               child: products.when(
+
 
 
                 loading: () =>
@@ -251,44 +244,40 @@ class _HomeScreenState
 
 
 
+
                 error: (error, stack) =>
 
                     Center(
 
-                      child: Text(
+                      child:
+                          Text(
 
-                        "Error: $error",
+                            "Error: $error",
 
-                      ),
+                          ),
 
                     ),
 
 
 
 
-                data: (items){
+
+
+                data: (items) {
 
 
 
                   final filteredProducts =
-                      items.where((product){
+
+                      items.where((product) {
+
 
 
                     return product.title
-                            .toLowerCase()
-                            .contains(searchText)
 
-                        ||
+                        .toLowerCase()
 
-                        product.category
-                            .toLowerCase()
-                            .contains(searchText)
-
-                        ||
-
-                        product.description
-                            .toLowerCase()
-                            .contains(searchText);
+                        .contains(searchQuery);
 
 
 
@@ -298,40 +287,20 @@ class _HomeScreenState
 
 
 
-                  if(filteredProducts.isEmpty){
+
+                  if(filteredProducts.isEmpty) {
+
 
                     return const Center(
 
-                      child: Column(
+                      child: Text(
 
-                        mainAxisAlignment:
-                            MainAxisAlignment.center,
-
-                        children: [
-
-                          Icon(
-                            Icons.search_off,
-                            size: 60,
-                          ),
-
-
-                          SizedBox(height: 15),
-
-
-                          Text(
-                            "No products found",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-
-                        ],
+                        "No products found",
 
                       ),
 
                     );
+
 
                   }
 
@@ -342,33 +311,33 @@ class _HomeScreenState
                   return GridView.builder(
 
 
+
                     itemCount:
                         filteredProducts.length,
 
 
 
                     gridDelegate:
+
                         const SliverGridDelegateWithFixedCrossAxisCount(
 
-                      crossAxisCount:
-                          2,
 
-                      childAspectRatio:
-                          0.62,
+                      crossAxisCount: 2,
 
-                      crossAxisSpacing:
-                          10,
 
-                      mainAxisSpacing:
-                          10,
+                      childAspectRatio: 0.65,
+
 
                     ),
 
 
 
 
+
+
                     itemBuilder:
-                        (context,index){
+                        (context,index) {
+
 
 
                       final product =
@@ -376,68 +345,77 @@ class _HomeScreenState
 
 
 
-                      return GestureDetector(
-
-                        onTap: (){
 
 
-                          Navigator.push(
 
-                            context,
+                      return ProductCard(
 
-                            MaterialPageRoute(
 
-                              builder: (_) =>
+                        product: product,
 
-                                  ProductDetailsScreen(
 
-                                    product:
-                                        product,
 
-                                  ),
 
-                            ),
+                        onFavorite: () {
 
-                          );
+
+
+                          // Favorites later
+
 
 
                         },
 
 
 
-                        child: ProductCard(
-
-                          product:
-                              product,
 
 
-                          onFavorite: (){},
+
+                        onAddToCart: () {
 
 
-                          onAddToCart: (){
+
+                          ref
+
+                              .read(
+                                cartProvider.notifier,
+                              )
+
+                              .addToCart(product);
 
 
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(
 
-                              SnackBar(
 
-                                content: Text(
 
-                                  "${product.title} added to cart 🛒",
 
-                                ),
+                          ScaffoldMessenger.of(context)
+
+                              .showSnackBar(
+
+
+                            SnackBar(
+
+
+                              content: Text(
+
+                                "${product.title} added to cart 🛒",
 
                               ),
 
-                            );
+
+                            ),
 
 
-                          },
+                          );
 
-                        ),
+
+
+                        },
+
+
 
                       );
+
 
 
                     },
@@ -446,21 +424,30 @@ class _HomeScreenState
                   );
 
 
+
                 },
+
 
 
               ),
 
+
             ),
+
 
           ],
 
+
         ),
+
 
       ),
 
+
     );
 
+
   }
+
 
 }
