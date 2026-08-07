@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/auth_provider.dart';
-
+import '../../../providers/storage_provider.dart';
+import '../../home/screens/home_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -43,7 +44,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             usernameController.text.trim(),
             passwordController.text.trim(),
           );
+await ref
+    .read(storageProvider)
+    .saveToken(result.token);
 
+    Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (_) => const HomeScreen(),
+  ),
+);
 
       if (!mounted) return;
 
