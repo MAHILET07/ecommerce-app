@@ -3,10 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/product_model.dart';
 
 
-class FavoriteNotifier extends StateNotifier<List<ProductModel>> {
+
+class FavoriteNotifier extends Notifier<List<ProductModel>> {
 
 
-  FavoriteNotifier() : super([]);
+  @override
+  List<ProductModel> build() {
+
+    return [];
+
+  }
 
 
 
@@ -21,11 +27,13 @@ class FavoriteNotifier extends StateNotifier<List<ProductModel>> {
 
     if (exists) {
 
+
       state = state
           .where(
             (item) => item.id != product.id,
           )
           .toList();
+
 
 
     } else {
@@ -62,10 +70,11 @@ class FavoriteNotifier extends StateNotifier<List<ProductModel>> {
 
 
 
+
 final favoriteProvider =
 
-StateNotifierProvider<FavoriteNotifier, List<ProductModel>>(
+NotifierProvider<FavoriteNotifier, List<ProductModel>>(
 
-  (ref) => FavoriteNotifier(),
+  FavoriteNotifier.new,
 
 );

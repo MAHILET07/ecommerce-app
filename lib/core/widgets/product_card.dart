@@ -6,16 +6,25 @@ import '../../features/product/screens/product_details_screen.dart';
 
 class ProductCard extends StatelessWidget {
 
+
   final ProductModel product;
+
   final VoidCallback? onFavorite;
+
   final VoidCallback? onAddToCart;
 
 
+
   const ProductCard({
+
     super.key,
+
     required this.product,
+
     this.onFavorite,
+
     this.onAddToCart,
+
   });
 
 
@@ -60,26 +69,20 @@ class ProductCard extends StatelessWidget {
 
         shape: RoundedRectangleBorder(
 
-          borderRadius:
-              BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18),
 
         ),
 
 
-        clipBehavior:
-            Clip.antiAlias,
-
+        clipBehavior: Clip.antiAlias,
 
 
         child: Column(
 
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
-
+          crossAxisAlignment: CrossAxisAlignment.start,
 
 
           children: [
-
 
 
             Expanded(
@@ -92,40 +95,37 @@ class ProductCard extends StatelessWidget {
                 children: [
 
 
-
                   Positioned.fill(
 
                     child: Padding(
 
-                      padding:
-                          const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
 
 
                       child: Image.network(
 
                         product.image,
 
-                        fit:
-                            BoxFit.contain,
+
+                        fit: BoxFit.contain,
 
 
                         errorBuilder:
-                            (context, error, stackTrace) {
+                            (context,error,stackTrace){
 
                           return const Center(
 
                             child: Icon(
 
-                              Icons.image_not_supported_outlined,
+                              Icons.image_not_supported,
 
-                              size: 45,
+                              size:45,
 
                             ),
 
                           );
 
                         },
-
 
                       ),
 
@@ -135,38 +135,21 @@ class ProductCard extends StatelessWidget {
 
 
 
-
                   Positioned(
 
-                    top: 8,
+                    top:8,
 
-                    right: 8,
-
-
-                    child: Material(
-
-                      color:
-                          Theme.of(context)
-                              .colorScheme
-                              .surface,
+                    right:8,
 
 
-                      shape:
-                          const CircleBorder(),
+                    child: IconButton(
+
+                      onPressed: onFavorite,
 
 
-                      child: IconButton(
+                      icon: const Icon(
 
-                        onPressed:
-                            onFavorite,
-
-
-                        icon:
-                            const Icon(
-
-                          Icons.favorite_border,
-
-                        ),
+                        Icons.favorite_border,
 
                       ),
 
@@ -187,18 +170,13 @@ class ProductCard extends StatelessWidget {
 
             Expanded(
 
-              flex: 4,
+              flex:4,
 
 
               child: Padding(
 
                 padding:
-                    const EdgeInsets.fromLTRB(
-                      12,
-                      4,
-                      12,
-                      10,
-                    ),
+                    const EdgeInsets.all(12),
 
 
 
@@ -208,16 +186,14 @@ class ProductCard extends StatelessWidget {
                       CrossAxisAlignment.start,
 
 
-
                   children: [
-
 
 
                     Text(
 
                       product.category,
 
-                      maxLines: 1,
+                      maxLines:1,
 
                       overflow:
                           TextOverflow.ellipsis,
@@ -226,9 +202,7 @@ class ProductCard extends StatelessWidget {
 
 
 
-
-                    const SizedBox(height: 5),
-
+                    const SizedBox(height:5),
 
 
 
@@ -236,13 +210,14 @@ class ProductCard extends StatelessWidget {
 
                       product.title,
 
-                      maxLines: 2,
+                      maxLines:2,
 
                       overflow:
                           TextOverflow.ellipsis,
 
 
-                      style: const TextStyle(
+                      style:
+                          const TextStyle(
 
                         fontWeight:
                             FontWeight.bold,
@@ -250,8 +225,6 @@ class ProductCard extends StatelessWidget {
                       ),
 
                     ),
-
-
 
 
 
@@ -269,14 +242,13 @@ class ProductCard extends StatelessWidget {
 
                           Icons.star,
 
-                          size: 17,
+                          size:17,
 
                         ),
 
 
 
-                        const SizedBox(width: 4),
-
+                        const SizedBox(width:5),
 
 
 
@@ -289,9 +261,7 @@ class ProductCard extends StatelessWidget {
 
 
 
-
                         const Spacer(),
-
 
 
 
@@ -311,7 +281,6 @@ class ProductCard extends StatelessWidget {
                         ),
 
 
-
                       ],
 
                     ),
@@ -319,9 +288,7 @@ class ProductCard extends StatelessWidget {
 
 
 
-
-                    const SizedBox(height: 8),
-
+                    const SizedBox(height:8),
 
 
 
@@ -332,9 +299,7 @@ class ProductCard extends StatelessWidget {
                           double.infinity,
 
 
-                      height:
-                          38,
-
+                      height:38,
 
 
                       child:
@@ -348,23 +313,24 @@ class ProductCard extends StatelessWidget {
                         icon:
                             const Icon(
 
-                          Icons.shopping_cart_outlined,
+                          Icons.shopping_cart,
 
-                          size: 18,
+                          size:18,
 
                         ),
 
 
-
                         label:
                             const Text(
-                              "Add to cart",
-                            ),
 
+                          "Add to cart",
+
+                        ),
 
                       ),
 
                     ),
+
 
 
                   ],
@@ -374,7 +340,6 @@ class ProductCard extends StatelessWidget {
               ),
 
             ),
-
 
 
           ],
@@ -387,6 +352,5 @@ class ProductCard extends StatelessWidget {
 
 
   }
-
 
 }
