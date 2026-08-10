@@ -6,7 +6,7 @@ import '../../../core/widgets/product_card.dart';
 
 import '../../cart/providers/cart_provider.dart';
 import '../../cart/screens/cart_screen.dart';
-
+import '../../orders/screens/orders_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
 
@@ -39,50 +39,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
 
-
-      appBar: AppBar(
-
-        title: const Text(
-          "ZembilGo",
-        ),
-
-
-        actions: [
-
-
-          IconButton(
-
-            icon: const Icon(
-              Icons.shopping_cart_outlined,
-            ),
-
-
-            onPressed: () {
-
-
-              Navigator.push(
-
-                context,
-
-                MaterialPageRoute(
-
-                  builder: (_) =>
-                      const CartScreen(),
-
-                ),
-
-              );
-
-
-            },
-
-          ),
-
-
-        ],
-
-
+appBar: AppBar(
+  title: const Text(
+    "ZembilGo",
+  ),
+  actions: [
+    // My Orders
+    IconButton(
+      icon: const Icon(
+        Icons.receipt_long_outlined,
       ),
+      tooltip: 'My Orders',
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const OrdersScreen(),
+          ),
+        );
+      },
+    ),
+
+    // Cart
+    IconButton(
+      icon: const Icon(
+        Icons.shopping_cart_outlined,
+      ),
+      tooltip: 'Cart',
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const CartScreen(),
+          ),
+        );
+      },
+    ),
+  ],
+),
 
 
 

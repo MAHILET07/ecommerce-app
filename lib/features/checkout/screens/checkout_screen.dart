@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../cart/providers/cart_provider.dart';
+import '../../orders/models/order_model.dart';
+import '../../orders/providers/order_provider.dart';
 
 class CheckoutScreen extends ConsumerWidget {
   const CheckoutScreen({super.key});
@@ -10,7 +12,7 @@ class CheckoutScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cart = ref.watch(cartProvider);
 
-    // Calculate subtotal from the cart items.
+    // Calculate subtotal from cart items.
     final subtotal = cart.fold<double>(
       0.0,
       (sum, item) => sum + item.totalPrice,
@@ -19,6 +21,7 @@ class CheckoutScreen extends ConsumerWidget {
     // Shipping fee.
     const shippingFee = 50.0;
 
+    // Final total.
     final total = subtotal + shippingFee;
 
     final primaryColor = Theme.of(context).colorScheme.primary;
@@ -282,7 +285,25 @@ class CheckoutScreen extends ConsumerWidget {
                               BorderRadius.circular(15),
                         ),
                       ),
-                      onPressed: () {
+onPressed: () async {
+                        // Create the order before clearing the cart.
+                        final order = OrderModel(
+                          id: DateTime.now()
+                              .millisecondsSinceEpoch
+                              .toString(),
+                          items: List.from(cart),
+                          subtotal: subtotal,
+                          shippingFee: shippingFee,
+                          total: total,
+                          date: DateTime.now(),
+                          status: 'Processing',
+                        );
+
+                        // Save the order.
+                await ref
+    .read(orderProvider.notifier)
+    .addOrder(order);
+
                         // Clear the cart.
                         ref
                             .read(cartProvider.notifier)
