@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/cart_provider.dart';
+import '../../checkout/screens/checkout_screen.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -40,8 +41,6 @@ class CartScreen extends ConsumerWidget {
                           leading: Image.network(
                             item.product.image,
                             width: 50,
-                            height: 50,
-                            fit: BoxFit.contain,
                             errorBuilder: (
                               context,
                               error,
@@ -52,17 +51,14 @@ class CartScreen extends ConsumerWidget {
                               );
                             },
                           ),
-
                           title: Text(
                             item.product.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-
                           subtitle: Text(
                             '\$${item.totalPrice.toStringAsFixed(2)}',
                           ),
-
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -76,14 +72,12 @@ class CartScreen extends ConsumerWidget {
                                   );
                                 },
                               ),
-
                               Text(
                                 '${item.quantity}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-
                               IconButton(
                                 icon: const Icon(
                                   Icons.add,
@@ -103,57 +97,66 @@ class CartScreen extends ConsumerWidget {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  padding: const EdgeInsets.fromLTRB(
+                    20,
+                    10,
+                    20,
+                    20,
+                  ),
+                  child: Column(
                     children: [
-                      const Text(
-                        'Total:',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Total:',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '\$${cartNotifier.totalAmount.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary,
+                            ),
+                          ),
+                        ],
                       ),
 
-                      Text(
-                        '\$${cartNotifier.totalAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(height: 15),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const CheckoutScreen(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.payment,
+                          ),
+                          label: const Text(
+                            'Proceed to Checkout',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    20,
-                    0,
-                    20,
-                    20,
-                  ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Checkout coming soon!',
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Proceed to Checkout',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ],
